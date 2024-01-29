@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Platform, Modal, Button, KeyboardAvoidingView } from "react-native";
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { CustomButton } from "./CustomButton";
 
-export default function NewWorkout() {
-    const [workoutName, setWorkoutName] = useState('');
-    const [workoutSetsList, setWorkoutSetsList] = useState([]);
+export default function NewWorkout({ updateWorkoutList, workoutId, name = '', sets = [] }) {
+    const [workoutName, setWorkoutName] = useState(name);
+    const [workoutSetsList, setWorkoutSetsList] = useState(sets);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [newSet, setNewSet] = useState({});
+
+    function changeWorkoutName(name) {
+        setWorkoutName(name);
+        // updateWorkoutList(workoutId, { name: name, sets: workoutSetsList });
+    }
 
     function addSet() {
         const lastId = workoutSetsList.length > 0 ? workoutSetsList[workoutSetsList.length - 1].id + 1 : 1;
@@ -18,15 +22,16 @@ export default function NewWorkout() {
     }
 
     function saveSet() {
-
         const itemIndex = workoutSetsList.findIndex(item => item.id === newSet.id);
 
         if (itemIndex != -1) {
             const updatedWorkoutSetsList = [...workoutSetsList];
             updatedWorkoutSetsList[itemIndex] = { ...updatedWorkoutSetsList[itemIndex], weight: newSet.weight, reps: newSet.reps };
             setWorkoutSetsList(updatedWorkoutSetsList);
+            // updateWorkoutList(workoutId, { name: workoutName, sets: updatedWorkoutSetsList });
         } else {
             setWorkoutSetsList([...workoutSetsList, newSet]);
+            // updateWorkoutList(workoutId, { name: workoutName, sets: [...workoutSetsList, newSet] });
         }
         setIsModalVisible(false);
     }
@@ -37,18 +42,18 @@ export default function NewWorkout() {
         setIsModalVisible(true);
     }
 
-    function deleteSet(setId){
+    function deleteSet(setId) {
         const itemIndex = workoutSetsList.findIndex(item => item.id === setId);
-        const setObject = workoutSetsList[itemIndex];
         var newList = [];
         workoutSetsList.forEach((item, index) => {
-            if(item.id < setId){
+            if (item.id < setId) {
                 newList.push(item);
-            }else if(item.id > setId){
-                newList.push({id: item.id - 1, weight: item.weight, reps: item.reps});
+            } else if (item.id > setId) {
+                newList.push({ id: item.id - 1, weight: item.weight, reps: item.reps });
             }
         });
         setWorkoutSetsList(newList);
+        updateWorkoutList(workoutId, { name: workoutName, sets: newList });
         setIsModalVisible(false);
     }
 
@@ -56,7 +61,7 @@ export default function NewWorkout() {
         <View style={styles.container}>
             <TextInput
                 value={workoutName}
-                onChangeText={setWorkoutName}
+                onChangeText={(name) => { changeWorkoutName(name) }}
                 placeholder='Bench Press, Pull Down, ...'
                 placeholderTextColor='lightblue'
                 autoCorrect={false}
@@ -67,10 +72,10 @@ export default function NewWorkout() {
                 <Row data={['Set', 'Weight', 'Reps']} style={styles.headTable} textStyle={styles.textTableHead} />
                 {workoutSetsList.length > 0 ? workoutSetsList.map((set, index) => {
                     return (
-                        <Pressable onPress={() => onSetClick(set.id)}>
-                            <TableWrapper key={set.id} style={styles.rowTable}>
+                        <Pressable key={set.id} onPress={() => onSetClick(set.id)}>
+                            <TableWrapper style={styles.rowTable}>
                                 <Cell key={1} data={set.id} textStyle={styles.textTableCell} />
-                                <Cell key={2} data={set.weight.toString()} textStyle={styles.textTableCell} />
+                                <Cell key={2} data={set.weight} textStyle={styles.textTableCell} />
                                 <Cell key={3} data={set.reps} textStyle={styles.textTableCell} />
                             </TableWrapper>
                         </Pressable>
@@ -147,7 +152,7 @@ export default function NewWorkout() {
                                         textColor='white'
                                         onButtonPress={() => deleteSet(newSet.id)}
                                     />
-                                    : <View style={{height: 0, width: 0}}></View>
+                                    : <View style={{ height: 0, width: 0 }}></View>
                             }
                             <CustomButton
                                 text='Cancel'
@@ -175,6 +180,7 @@ const styles = StyleSheet.create({
         borderColor: 'lightblue',
         backgroundColor: 'lightblue',
         padding: 20,
+        marginTop: 40,
         ...Platform.select({
             ios: {
                 shadowColor: "#333333",
