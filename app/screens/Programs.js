@@ -74,10 +74,8 @@ export default function Programs({ navigation }) {
     function deleteProgram() {
         var newProgramList = [];
         programsList.forEach((item, index) => {
-            if (item.id < deleteProgramId) {
+            if (item.id != deleteProgramId) {
                 newProgramList.push(item);
-            } else if (item.id > deleteProgramId) {
-                newProgramList.push({ ...item, id: item.id - 1 });
             }
         });
         setProgramsList(newProgramList);

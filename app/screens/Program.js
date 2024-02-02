@@ -21,7 +21,7 @@ export default function Program({ route, navigation }) {
 
         if (itemIndex != -1) {
             const updatedWorkoutSetsList = [...workoutList];
-            updatedWorkoutSetsList[itemIndex] = { ...updatedWorkoutSetsList[itemIndex], workout: workout };
+            updatedWorkoutSetsList[itemIndex] = workout;
             setWorkoutList(updatedWorkoutSetsList);
         } else {
             setWorkoutList([...workoutList, workout]);
@@ -38,7 +38,7 @@ export default function Program({ route, navigation }) {
                         setProgramTitle(programs[itemIndex].name);
                         var workoutsArray = [];
                         programs[itemIndex].workouts.forEach(workout => {
-                            workoutsArray.push({ ...workout, workout: workout.workout })
+                            workoutsArray.push(workout);
                         });
                         setWorkoutList(workoutsArray);
                     }
@@ -51,7 +51,7 @@ export default function Program({ route, navigation }) {
 
     function addWorkout() {
         const lastId = workoutList.length > 0 ? workoutList[workoutList.length - 1].id + 1 : 1;
-        setWorkoutList([...workoutList, { id: lastId, workout: {} }]);
+        setWorkoutList([...workoutList, { id: lastId }]);
     }
 
     function saveProgram() {
@@ -68,10 +68,8 @@ export default function Program({ route, navigation }) {
     function deleteWorkout() {
         var newWorkoutList = [];
         workoutList.forEach((set, index) => {
-            if (set.id < deleteWorkoutId) {
+            if (set.id != deleteWorkoutId) {
                 newWorkoutList.push(set);
-            } else if (set.id > deleteWorkoutId) {
-                newWorkoutList.push({ ...set, id: set.id - 1, workout: {...set.workout, id: set.workout.id - 1} });
             }
         });
         setWorkoutList(newWorkoutList);
@@ -98,7 +96,7 @@ export default function Program({ route, navigation }) {
                                     <Ionicons name='trash' size={30} color='#ee0000' style={styles.deleteIcon} />
                                 </Pressable>
                             </View>
-                            <Workout name={workout.workout.name} sets={workout.workout.sets} workoutId={workout.id} updateWorkout={updateWorkout} />
+                            <Workout name={workout.name} sets={workout.sets} workoutId={workout.id} updateWorkout={updateWorkout} />
                         </View>
                     );
                 }) : <Text></Text>}

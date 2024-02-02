@@ -11,7 +11,6 @@ export default function Workout({ updateWorkout, workoutId, name = '', sets = []
 
     function changeWorkoutName(name) {
         setWorkoutName(name);
-        updateWorkout({id: workoutId, name: name, sets: workoutSetsList });
     }
 
     function addSet() {
