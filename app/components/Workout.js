@@ -18,7 +18,6 @@ export default function Workout({ updateWorkout, workoutId, name = '', sets = []
         const lastId = workoutSetsList.length > 0 ? workoutSetsList[workoutSetsList.length - 1].id + 1 : 1;
         setNewSet({ id: lastId, weight: '', reps: '' });
         setIsModalVisible(true);
-        setWorkoutSetsList([...workoutSetsList, { id: workoutSetsList.length + 1, weight: '-', reps: '-' }])
     }
 
     function saveSet() {
@@ -145,7 +144,7 @@ export default function Workout({ updateWorkout, workoutId, name = '', sets = []
                                 onButtonPress={saveSet}
                             />
                             {
-                                newSet.id < workoutSetsList.length + 1 ?
+                                workoutSetsList.some(set => set.id === newSet.id) ?
                                     <CustomButton
                                         text='Delete'
                                         buttonColor='#bb0000'

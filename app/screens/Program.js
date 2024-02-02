@@ -67,11 +67,11 @@ export default function Program({ route, navigation }) {
 
     function deleteWorkout() {
         var newWorkoutList = [];
-        workoutList.forEach((item, index) => {
-            if (item.id < deleteWorkoutId) {
-                newWorkoutList.push(item);
-            } else if (item.id > deleteWorkoutId) {
-                newWorkoutList.push({ ...item, id: item.id - 1, workout: {...item.workout, id: item.workout.id - 1} });
+        workoutList.forEach((set, index) => {
+            if (set.id < deleteWorkoutId) {
+                newWorkoutList.push(set);
+            } else if (set.id > deleteWorkoutId) {
+                newWorkoutList.push({ ...set, id: set.id - 1, workout: {...set.workout, id: set.workout.id - 1} });
             }
         });
         setWorkoutList(newWorkoutList);
