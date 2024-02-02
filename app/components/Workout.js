@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, Pressable, Platform, Modal, Button, 
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { CustomButton } from "./CustomButton";
 
-export default function NewWorkout({ updateWorkoutList, workoutId, name = '', sets = [] }) {
+export default function Workout({ updateWorkout, workoutId, name = '', sets = [] }) {
     const [workoutName, setWorkoutName] = useState(name);
     const [workoutSetsList, setWorkoutSetsList] = useState(sets);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -11,28 +11,29 @@ export default function NewWorkout({ updateWorkoutList, workoutId, name = '', se
 
     function changeWorkoutName(name) {
         setWorkoutName(name);
-        // updateWorkoutList(workoutId, { name: name, sets: workoutSetsList });
+        updateWorkout({id: workoutId, name: name, sets: workoutSetsList });
     }
 
     function addSet() {
         const lastId = workoutSetsList.length > 0 ? workoutSetsList[workoutSetsList.length - 1].id + 1 : 1;
         setNewSet({ id: lastId, weight: '', reps: '' });
         setIsModalVisible(true);
-        // setWorkoutSetsList([...workoutSetsList, { id: workoutSetsList.length + 1, weight: '-', reps: '-' }])
+        setWorkoutSetsList([...workoutSetsList, { id: workoutSetsList.length + 1, weight: '-', reps: '-' }])
     }
 
     function saveSet() {
         const itemIndex = workoutSetsList.findIndex(item => item.id === newSet.id);
+        var updatedSets = [];
 
         if (itemIndex != -1) {
-            const updatedWorkoutSetsList = [...workoutSetsList];
-            updatedWorkoutSetsList[itemIndex] = { ...updatedWorkoutSetsList[itemIndex], weight: newSet.weight, reps: newSet.reps };
-            setWorkoutSetsList(updatedWorkoutSetsList);
-            // updateWorkoutList(workoutId, { name: workoutName, sets: updatedWorkoutSetsList });
+            updatedSets = [...workoutSetsList];
+            updatedSets[itemIndex] = { ...updatedSets[itemIndex], weight: newSet.weight, reps: newSet.reps };
         } else {
-            setWorkoutSetsList([...workoutSetsList, newSet]);
-            // updateWorkoutList(workoutId, { name: workoutName, sets: [...workoutSetsList, newSet] });
+            updatedSets = [...workoutSetsList, newSet];
         }
+
+        setWorkoutSetsList(updatedSets);
+        updateWorkout({id: workoutId, name: workoutName, sets: updatedSets });
         setIsModalVisible(false);
     }
 
@@ -43,7 +44,6 @@ export default function NewWorkout({ updateWorkoutList, workoutId, name = '', se
     }
 
     function deleteSet(setId) {
-        const itemIndex = workoutSetsList.findIndex(item => item.id === setId);
         var newList = [];
         workoutSetsList.forEach((item, index) => {
             if (item.id < setId) {
@@ -53,7 +53,7 @@ export default function NewWorkout({ updateWorkoutList, workoutId, name = '', se
             }
         });
         setWorkoutSetsList(newList);
-        updateWorkoutList(workoutId, { name: workoutName, sets: newList });
+        updateWorkout({ id: workoutId, name: workoutName, sets: newList });
         setIsModalVisible(false);
     }
 
@@ -180,7 +180,6 @@ const styles = StyleSheet.create({
         borderColor: 'lightblue',
         backgroundColor: 'lightblue',
         padding: 20,
-        marginTop: 40,
         ...Platform.select({
             ios: {
                 shadowColor: "#333333",

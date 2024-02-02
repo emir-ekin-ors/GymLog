@@ -2,38 +2,30 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import Programs from './screens/Programs';
-import Program from './screens/Program';
-import { Pressable, StyleSheet, Text } from 'react-native';
-import NewProgram from './screens/NewProgram';
-import { useNavigation } from '@react-navigation/native';
-import Timer from './screens/Timer';
-import Songs from './screens/Songs';
+import Programs from './app/screens/Programs';
+import Program from './app/screens/Program';
+import { StyleSheet } from 'react-native';
+import Timer from './app/screens/Timer';
+import Songs from './app/screens/Songs';
 import { useEffect } from 'react';
+import { storeData } from './app/helpers/Storage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
-function newProgramButton() {
-  const navigation = useNavigation();
-  return (
-    <Pressable onPress={() => { navigation.navigate("NewProgram") }}>
-      <Ionicons name="add" style={styles.tabBar} />
-    </Pressable>
-  );
-}
 
 function ProgramsStack() {
   return (
     <Stack.Navigator screenOptions={{headerTintColor: 'black'}}>
       <Stack.Screen name="Programs" component={Programs} />
       <Stack.Screen name="Program" component={Program} />
-      <Stack.Screen name="NewProgram" component={NewProgram} options={{ headerTitle: 'New Program' }} />
     </Stack.Navigator>
   );
 }
 
 export default function App() {
+  useEffect(() => {
+    // storeData('programs', {});
+  },[]);
   return (
     <NavigationContainer>
       <Tab.Navigator initialRouteName='ProgramsList' screenOptions={{tabBarShowLabel: false, tabBarActiveTintColor: '#00C1FF'}}>
