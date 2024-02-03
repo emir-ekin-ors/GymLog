@@ -1,7 +1,8 @@
-import { Text, View, SafeAreaView, StyleSheet, Pressable, Platform, Modal, KeyboardAvoidingView } from 'react-native';
+import { Text, View, SafeAreaView, StyleSheet, Pressable, Platform, Modal, KeyboardAvoidingView, Animated } from 'react-native';
 import { CustomButton } from '../components/CustomButton';
 import { useEffect, useState } from 'react';
 import { getData, storeData } from '../helpers/Storage';
+import { GestureHandlerRootView, Swipeable, TouchableOpacity } from 'react-native-gesture-handler';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Programs({ navigation }) {
@@ -9,6 +10,7 @@ export default function Programs({ navigation }) {
     const [lastProgramId, setLastProgramId] = useState(1);
     const [deleteProgramId, setDeleteProgramId] = useState(-1);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    let programRows = [];
 
     useEffect(() => {
         (async function () {
@@ -39,36 +41,14 @@ export default function Programs({ navigation }) {
         }
 
         setProgramsList(updatedProgramsList);
-        /* console.log("--------");
-        console.log('Storing these programs: ');
-        updatedProgramsList.forEach((program) => {
-            console.log('Program id: ', program.id);
-            console.log('Program name: ', program.name);
-            console.log('Program workouts: ');
-            program.workouts.forEach((workout) => {
-                console.log(workout);
-            });
-        }); */
         storeData('programs', updatedProgramsList);
-
-        /*const data = await getData('programs');
-         console.log("--------");
-        console.log('Reading these programs: ');
-        data.forEach((program) => {
-            console.log('Program id: ', program.id);
-            console.log('Program name: ', program.name);
-            console.log('Program workouts: ');
-            program.workouts.forEach((workout) => {
-                console.log(workout);
-            });
-        });
-        console.log('END'); */
 
         const lastId = updatedProgramsList.length > 0 ? updatedProgramsList[updatedProgramsList.length - 1].id : 0;
         setLastProgramId(lastId + 1);
     }
 
-    function openDeleteModal(programId) {
+    function openDeleteModal(programId, programIndex) {
+        programRows[programIndex].close();
         setDeleteProgramId(programId);
         setIsModalVisible(true);
     }
@@ -86,29 +66,48 @@ export default function Programs({ navigation }) {
         setIsModalVisible(false);
     }
 
+    const renderRightActions = (progress, dragAnimatedValue, programId) => {
+        const opacity = dragAnimatedValue.interpolate({
+            inputRange: [-150, 0],
+            outputRange: [1, 0],
+            extrapolate: 'clamp',
+        });
+        return (
+            <View style={styles.swipedRow}>
+                <Animated.View style={[styles.deleteButton, { opacity }]}>
+                    <Ionicons name='trash' size={30} color='white' style={styles.deleteIcon} />
+                </Animated.View>
+            </View>
+        );
+    };
+
     return (
         <View style={styles.container}>
             <SafeAreaView>
                 {
                     programsList.length > 0 ? programsList.map((program, index) => {
                         return (
-                            <View key={program.id} style={styles.programContainer}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Pressable onPress={
-                                        () => navigation.navigate('Program', {
-                                            programId: program.id,
-                                            updateProgramsList: updateProgramsList
-                                        })
-                                    }>
-                                        <Text style={styles.programTitle}>
-                                            {program.name}
-                                        </Text>
-                                    </Pressable>
-                                    <Pressable onPress={() => openDeleteModal(program.id)}>
-                                        <Ionicons name='trash' size={30} color='#ee0000' style={styles.deleteIcon} />
-                                    </Pressable>
-                                </View>
-                            </View>
+                            <GestureHandlerRootView key={program.id} style={styles.gestureContainer}>
+                                <Swipeable
+                                    ref={ref => programRows[index] = ref}
+                                    renderRightActions={renderRightActions}
+                                    onSwipeableOpen={() => openDeleteModal(program.id, index)}
+                                    friction={2}
+                                >
+                                    <View style={styles.programContainer}>
+                                        <Pressable onPress={
+                                            () => navigation.navigate('Program', {
+                                                programId: program.id,
+                                                updateProgramsList: updateProgramsList
+                                            })
+                                        }>
+                                            <Text style={styles.programTitle}>
+                                                {program.name}
+                                            </Text>
+                                        </Pressable>
+                                    </View>
+                                </Swipeable>
+                            </GestureHandlerRootView>
                         );
                     }) : <Text></Text>
                 }
@@ -178,16 +177,10 @@ export default function Programs({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20
+        padding: 20,
+        backgroundColor: 'white'
     },
-    programContainer: {
-        alignSelf: 'center',
-        borderWidth: 1,
-        width: '100%',
-        borderRadius: 5,
-        borderColor: 'lightblue',
-        backgroundColor: 'lightblue',
-        marginBottom: 20,
+    gestureContainer: {
         ...Platform.select({
             ios: {
                 shadowColor: "#333333",
@@ -204,6 +197,15 @@ const styles = StyleSheet.create({
             }
         })
     },
+    programContainer: {
+        width: '100%',
+        alignSelf: 'center',
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: 'lightblue',
+        backgroundColor: 'lightblue',
+        marginBottom: 20,
+    },
     programTitle: {
         fontSize: 30,
         fontWeight: 'bold',
@@ -217,5 +219,21 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         marginBottom: 20,
-    }
+    },
+    swipedRow: {
+        flexDirection: 'row',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingLeft: 5,
+        backgroundColor: 'red',
+        marginBottom: 20,
+        borderRadius: 5,
+    },
+    deleteButton: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        height: '100%',
+        marginRight: 10
+    },
 });

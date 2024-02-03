@@ -77,7 +77,7 @@ export default function Workout({ updateWorkout, workout, name = '', sets = [] }
                                 if (index == workout.bestSets.length - 1) endSymbol = <Text></Text>;
                                 const text = set.weight.toString() + 'x' + set.reps.toString();
                                 return (
-                                    <View style={{ flexDirection: 'row' }}>
+                                    <View key={index} style={{ flexDirection: 'row' }}>
                                         <Text style={styles.personalBestSection}>{text}</Text>{endSymbol}
                                     </View>
                                 );
@@ -86,7 +86,6 @@ export default function Workout({ updateWorkout, workout, name = '', sets = [] }
                     </View>
                 </View>
             }
-
 
             <Table borderStyle={{ borderColor: 'transparent', width: '100%' }} style={{ marginBottom: 20 }}>
                 <Row data={['Set', 'Weight', 'Reps']} style={styles.headTable} textStyle={styles.textTableHead} />
