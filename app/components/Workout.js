@@ -4,7 +4,7 @@ import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { CustomButton } from "./CustomButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function Workout({ updateWorkout, workout, name = '', sets = [] }) {
+export default function Workout({ updateWorkout, openDeleteModal, workout, name = '', sets = [] }) {
     const [workoutName, setWorkoutName] = useState(name);
     const [workoutSetsList, setWorkoutSetsList] = useState(sets);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -58,14 +58,19 @@ export default function Workout({ updateWorkout, workout, name = '', sets = [] }
 
     return (
         <View style={styles.container}>
-            <TextInput
-                value={workoutName}
-                onChangeText={(name) => { changeWorkoutName(name) }}
-                placeholder='Bench Press, Pull Down, ...'
-                placeholderTextColor='lightblue'
-                autoCorrect={false}
-                style={styles.inputText}
-            />
+            <View style={{flexDirection: 'row'}}>
+                <TextInput
+                    value={workoutName}
+                    onChangeText={(name) => { changeWorkoutName(name) }}
+                    placeholder='Bench Press, Pull Down, ...'
+                    placeholderTextColor='lightblue'
+                    autoCorrect={false}
+                    style={styles.inputText}
+                />
+                <Pressable onPress={() => openDeleteModal(workout.id)}>
+                    <Ionicons name='trash' size={30} color='#ee0000' style={{marginLeft: 10}} />
+                </Pressable>
+            </View>
             {
                 workout.bestSets != null && workout.bestSets.length > 0 &&
                 <View style={styles.bestSetsContainer}>
@@ -231,6 +236,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#efffff',
         borderRadius: 5,
         padding: 10,
+        width: '90%'
     },
     repText: {
         fontSize: 40,

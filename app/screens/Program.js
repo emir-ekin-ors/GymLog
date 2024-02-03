@@ -76,9 +76,9 @@ export default function Program({ route, navigation }) {
 
         var updatedWorkoutList = [...workoutList];
         updatedWorkoutList.forEach((workout, index) => {
-            if(workout.bestSets != null && workout.bestSets.length > 0){
+            if (workout.bestSets != null && workout.bestSets.length > 0) {
                 workout.bestSets = workout.bestSets.slice(0, workout.sets.length);
-            }else{
+            } else {
                 workout.bestSets = [];
             }
             const bestVolume = calculateVolume(workout.bestSets);
@@ -124,13 +124,8 @@ export default function Program({ route, navigation }) {
 
                 {workoutList.length > 0 ? workoutList.map((workout) => {
                     return (
-                        <View key={listId++} style={{ width: '100%', alignItems: 'center' }}>
-                            <View style={{ width: '85%', alignItems: 'flex-end', marginBottom: -20, zIndex: 1 }}>
-                                <Pressable onPress={() => openDeleteModal(workout.id)}>
-                                    <Ionicons name='trash' size={30} color='#ee0000' style={styles.deleteIcon} />
-                                </Pressable>
-                            </View>
-                            <Workout name={workout.name} sets={workout.sets} workout={workout} updateWorkout={updateWorkout} />
+                        <View key={listId++} style={{ width: '100%', alignItems: 'center', marginBottom: 30 }}>
+                            <Workout name={workout.name} sets={workout.sets} workout={workout} updateWorkout={updateWorkout} openDeleteModal={openDeleteModal} />
                         </View>
                     );
                 }) : <Text></Text>}
@@ -219,7 +214,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         backgroundColor: 'lightblue',
         textAlign: 'center',
-        fontSize: 20
+        fontSize: 20,
+        marginBottom: 40
     },
     deleteIcon: {
         marginTop: 5,
