@@ -15,6 +15,8 @@ export default function Programs({ navigation }) {
             try {
                 const programs = await getData('programs');
                 setProgramsList(programs);
+                const lastId = programs.length > 0 ? programs[programs.length - 1].id : 0;
+                setLastProgramId(lastId + 1);
             } catch (e) {
                 console.error(e);
             }
@@ -29,9 +31,9 @@ export default function Programs({ navigation }) {
             updatedProgramsList = [...programsList];
             updatedProgramsList[programIndex] = program;
         } else {
-            if(programsList.length > 0){
+            if (programsList.length > 0) {
                 updatedProgramsList = [...programsList, program];
-            }else{
+            } else {
                 updatedProgramsList = [program];
             }
         }
@@ -73,7 +75,7 @@ export default function Programs({ navigation }) {
 
     function deleteProgram() {
         var newProgramList = [];
-        programsList.forEach((item, index) => {
+        programsList.forEach(item => {
             if (item.id != deleteProgramId) {
                 newProgramList.push(item);
             }

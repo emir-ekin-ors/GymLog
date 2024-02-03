@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Platform, Modal, Button, KeyboardAvoidingView } from "react-native";
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { CustomButton } from "./CustomButton";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function Workout({ updateWorkout, workoutId, name = '', sets = [] }) {
+export default function Workout({ updateWorkout, workout, name = '', sets = [] }) {
     const [workoutName, setWorkoutName] = useState(name);
     const [workoutSetsList, setWorkoutSetsList] = useState(sets);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -31,7 +32,7 @@ export default function Workout({ updateWorkout, workoutId, name = '', sets = []
         }
 
         setWorkoutSetsList(updatedSets);
-        updateWorkout({id: workoutId, name: workoutName, sets: updatedSets });
+        updateWorkout({ id: workout.id, name: workoutName, sets: updatedSets, bestSets: workout.bestSets });
         setIsModalVisible(false);
     }
 
@@ -51,7 +52,7 @@ export default function Workout({ updateWorkout, workoutId, name = '', sets = []
             }
         });
         setWorkoutSetsList(newList);
-        updateWorkout({ id: workoutId, name: workoutName, sets: newList });
+        updateWorkout({ id: workout.id, name: workoutName, sets: newList, bestSets: workout.bestSets });
         setIsModalVisible(false);
     }
 
@@ -65,6 +66,27 @@ export default function Workout({ updateWorkout, workoutId, name = '', sets = []
                 autoCorrect={false}
                 style={styles.inputText}
             />
+            {
+                workout.bestSets != null && workout.bestSets.length > 0 &&
+                <View style={styles.bestSetsContainer}>
+                    <Text style={styles.personalBestSection}>Best</Text>
+                    <View style={{ flexDirection: 'row' }}>
+                        {
+                            workout.bestSets.map((set, index) => {
+                                var endSymbol = <Ionicons name="caret-forward-outline" color='white' style={{ marginTop: 3 }} />;
+                                if (index == workout.bestSets.length - 1) endSymbol = <Text></Text>;
+                                const text = set.weight.toString() + 'x' + set.reps.toString();
+                                return (
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={styles.personalBestSection}>{text}</Text>{endSymbol}
+                                    </View>
+                                );
+                            })
+                        }
+                    </View>
+                </View>
+            }
+
 
             <Table borderStyle={{ borderColor: 'transparent', width: '100%' }} style={{ marginBottom: 20 }}>
                 <Row data={['Set', 'Weight', 'Reps']} style={styles.headTable} textStyle={styles.textTableHead} />
@@ -250,5 +272,17 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         marginBottom: 20,
+    },
+    personalBestSection: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+    bestSetsContainer: {
+        backgroundColor: '#dd0000',
+        padding: 5,
+        alignItems: 'center',
+        marginBottom: 5,
+        borderRadius: 5
     }
 });

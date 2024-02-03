@@ -16,18 +16,6 @@ export default function Program({ route, navigation }) {
     const [deleteWorkoutId, setDeleteWorkoutId] = useState(-1);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    function updateWorkout(workout) {
-        const itemIndex = workoutList.findIndex(item => item.id === workout.id);
-
-        if (itemIndex != -1) {
-            const updatedWorkoutSetsList = [...workoutList];
-            updatedWorkoutSetsList[itemIndex] = workout;
-            setWorkoutList(updatedWorkoutSetsList);
-        } else {
-            setWorkoutList([...workoutList, workout]);
-        }
-    }
-
     useEffect(() => {
         (async function () {
             try {
@@ -54,8 +42,54 @@ export default function Program({ route, navigation }) {
         setWorkoutList([...workoutList, { id: lastId }]);
     }
 
+    function updateWorkout(workout) {
+        const itemIndex = workoutList.findIndex(item => item.id === workout.id);
+        var updatedWorkoutSetsList = [];
+        if (itemIndex != -1) {
+            updatedWorkoutSetsList = [...workoutList];
+            updatedWorkoutSetsList[itemIndex] = workout;
+        } else {
+            updatedWorkoutSetsList = [...workoutList, workout];
+        }
+        setWorkoutList(updatedWorkoutSetsList);
+    }
+
+    function calculateVolume(listOfObjects) {
+        var volume = 0;
+        listOfObjects.length > 0 ? listOfObjects.forEach(item => {
+            volume += parseInt(item.weight) * parseInt(item.reps);
+        }) : 0;
+
+        return volume;
+    }
+
     function saveProgram() {
-        const program = { id: programId, name: programTitle, workouts: workoutList };
+        /* 
+            For every workout in workoutList, there must be a personalBest attribute. 
+            This is a list of objects that each object contains setId, set weight, set reps. 
+            Basically it will be the copy of the workout.sets list.
+            Every time user saves program, this function should calculate volume of the current 
+            workout.sets and volume of the personalBest. If volume of workout.sets is larger 
+            than personalBest's volume. workout.sets will be new personalBest list.
+            Volume: (set1.weight x set1.reps) + (set2.weight x set2.reps) + ....
+        */
+
+        var updatedWorkoutList = [...workoutList];
+        updatedWorkoutList.forEach((workout, index) => {
+            if(workout.bestSets != null && workout.bestSets.length > 0){
+                workout.bestSets = workout.bestSets.slice(0, workout.sets.length);
+            }else{
+                workout.bestSets = [];
+            }
+            const bestVolume = calculateVolume(workout.bestSets);
+            const currentWorkoutVolume = calculateVolume(workout.sets);
+
+            if (bestVolume < currentWorkoutVolume) {
+                updatedWorkoutList[index].bestSets = updatedWorkoutList[index].sets;
+            }
+        })
+
+        const program = { id: programId, name: programTitle, workouts: updatedWorkoutList };
         updateProgramsList(program);
         navigation.goBack();
     }
@@ -91,12 +125,12 @@ export default function Program({ route, navigation }) {
                 {workoutList.length > 0 ? workoutList.map((workout) => {
                     return (
                         <View key={listId++} style={{ width: '100%', alignItems: 'center' }}>
-                            <View style={{width: '85%', alignItems: 'flex-end', marginBottom: -20, zIndex: 1}}>
+                            <View style={{ width: '85%', alignItems: 'flex-end', marginBottom: -20, zIndex: 1 }}>
                                 <Pressable onPress={() => openDeleteModal(workout.id)}>
                                     <Ionicons name='trash' size={30} color='#ee0000' style={styles.deleteIcon} />
                                 </Pressable>
                             </View>
-                            <Workout name={workout.name} sets={workout.sets} workoutId={workout.id} updateWorkout={updateWorkout} />
+                            <Workout name={workout.name} sets={workout.sets} workout={workout} updateWorkout={updateWorkout} />
                         </View>
                     );
                 }) : <Text></Text>}
