@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Pressable, Platform, Modal, Button, 
 import { Table, TableWrapper, Row, Cell } from 'react-native-table-component';
 import { CustomButton } from "./CustomButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {colors} from '../helpers/constants';
 
 export default function Workout({ updateWorkout, openDeleteModal, workout, name = '', sets = [] }) {
     const [workoutName, setWorkoutName] = useState(name);
@@ -63,12 +64,12 @@ export default function Workout({ updateWorkout, openDeleteModal, workout, name 
                     value={workoutName}
                     onChangeText={(name) => { changeWorkoutName(name) }}
                     placeholder='Bench Press, Pull Down, ...'
-                    placeholderTextColor='lightblue'
+                    placeholderTextColor={colors.primaryBlue}
                     autoCorrect={false}
                     style={styles.inputText}
                 />
                 <Pressable onPress={() => openDeleteModal(workout.id)}>
-                    <Ionicons name='trash' size={30} color='#ee0000' style={{marginLeft: 10}} />
+                    <Ionicons name='trash' size={30} color={colors.red} style={{marginLeft: 10}} />
                 </Pressable>
             </View>
             {
@@ -109,8 +110,8 @@ export default function Workout({ updateWorkout, openDeleteModal, workout, name 
 
             <CustomButton
                 text='Add Set'
-                buttonColor='#404040'
-                textColor='white'
+                buttonColor={colors.primaryBlack}
+                textColor={colors.white}
                 onButtonPress={addSet}
             />
 
@@ -136,7 +137,7 @@ export default function Workout({ updateWorkout, openDeleteModal, workout, name 
                         <View
                             style={{
                                 height: '100%',
-                                backgroundColor: 'lightblue',
+                                backgroundColor: colors.primaryBlue,
                                 borderRadius: 20,
                                 padding: 20
                             }}>
@@ -164,24 +165,24 @@ export default function Workout({ updateWorkout, openDeleteModal, workout, name 
 
                             <CustomButton
                                 text='Save'
-                                buttonColor='#404040'
-                                textColor='white'
+                                buttonColor={colors.primaryBlack}
+                                textColor={colors.white}
                                 onButtonPress={saveSet}
                             />
                             {
                                 workoutSetsList.some(set => set.id === newSet.id) ?
                                     <CustomButton
                                         text='Delete'
-                                        buttonColor='#bb0000'
-                                        textColor='white'
+                                        buttonColor={colors.red}
+                                        textColor={colors.white}
                                         onButtonPress={() => deleteSet(newSet.id)}
                                     />
                                     : <View style={{ height: 0, width: 0 }}></View>
                             }
                             <CustomButton
                                 text='Cancel'
-                                buttonColor='white'
-                                textColor='#404040'
+                                buttonColor={colors.white}
+                                textColor={colors.primaryBlack}
                                 onButtonPress={() => setIsModalVisible(false)}
                             />
                         </View>
@@ -201,8 +202,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         width: '80%',
         borderRadius: 5,
-        borderColor: 'lightblue',
-        backgroundColor: 'lightblue',
+        borderColor: colors.primaryBlue,
+        backgroundColor: colors.primaryBlue,
         padding: 20,
         ...Platform.select({
             ios: {
@@ -232,15 +233,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         paddingBottom: 5,
         marginBottom: 20,
-        borderBottomColor: 'black',
-        backgroundColor: '#efffff',
+        borderBottomColor: colors.secondaryBlack,
+        backgroundColor: colors.secondaryBlue,
         borderRadius: 5,
         padding: 10,
         width: '90%'
     },
     repText: {
         fontSize: 40,
-        backgroundColor: '#efffff',
+        backgroundColor: colors.secondaryBlue,
         borderRadius: 10,
         width: '20%',
         height: 50,
@@ -257,12 +258,12 @@ const styles = StyleSheet.create({
     },
     headTable: {
         height: 40,
-        backgroundColor: '#404040',
+        backgroundColor: colors.primaryBlack,
     },
     textTableHead: {
         margin: 6,
         textAlign: 'center',
-        color: 'white'
+        color: colors.white
     },
     textTableCell: {
         margin: 6,
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
     },
     rowTable: {
         flexDirection: 'row',
-        backgroundColor: '#efffff',
+        backgroundColor: colors.secondaryBlue,
         marginTop: 15,
     },
     modalTitle: {
@@ -281,10 +282,10 @@ const styles = StyleSheet.create({
     personalBestSection: {
         fontSize: 14,
         fontWeight: 'bold',
-        color: 'white',
+        color: colors.white,
     },
     bestSetsContainer: {
-        backgroundColor: '#dd0000',
+        backgroundColor: colors.red,
         padding: 5,
         alignItems: 'center',
         marginBottom: 5,

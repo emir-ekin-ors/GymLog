@@ -3,7 +3,7 @@ import Workout from '../components/Workout';
 import { useEffect, useState } from 'react';
 import { CustomButton } from '../components/CustomButton';
 import { getData } from '../helpers/Storage';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import {colors} from '../helpers/constants';
 
 var listId = 0;
 
@@ -117,7 +117,7 @@ export default function Program({ route, navigation }) {
                     value={programTitle}
                     onChangeText={setProgramTitle}
                     placeholder='Chest, Upper Body, Thursday, ...'
-                    placeholderTextColor='white'
+                    placeholderTextColor={colors.white}
                     autoCorrect={false}
                     style={styles.inputText}
                 />
@@ -133,14 +133,14 @@ export default function Program({ route, navigation }) {
                 <View style={{ width: '100%', padding: 40 }}>
                     <CustomButton
                         text='Add Workout'
-                        buttonColor='#404040'
-                        textColor='white'
+                        buttonColor={colors.primaryBlack}
+                        textColor={colors.white}
                         onButtonPress={addWorkout}
                     />
                     <CustomButton
                         text='Save'
-                        buttonColor='lightblue'
-                        textColor='white'
+                        buttonColor={colors.primaryBlue}
+                        textColor={colors.white}
                         onButtonPress={saveProgram}
                     />
                 </View>
@@ -167,21 +167,21 @@ export default function Program({ route, navigation }) {
                         <View
                             style={{
                                 height: '100%',
-                                backgroundColor: 'lightblue',
+                                backgroundColor: colors.primaryBlue,
                                 borderRadius: 20,
                                 padding: 20
                             }}>
                             <Text style={styles.modalTitle}>Are you sure?</Text>
                             <CustomButton
                                 text='Delete'
-                                buttonColor='#bb0000'
-                                textColor='white'
+                                buttonColor={colors.red}
+                                textColor={colors.white}
                                 onButtonPress={deleteWorkout}
                             />
                             <CustomButton
                                 text='Cancel'
-                                buttonColor='white'
-                                textColor='#404040'
+                                buttonColor={colors.white}
+                                textColor={colors.primaryBlack}
                                 onButtonPress={() => setIsModalVisible(false)}
                             />
                         </View>
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         fontWeight: 'bold',
-        backgroundColor: 'lightblue',
+        backgroundColor: colors.primaryBlue,
         textAlign: 'center',
         fontSize: 20,
         marginBottom: 40

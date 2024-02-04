@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getData, storeData } from '../helpers/Storage';
 import { GestureHandlerRootView, Swipeable, TouchableOpacity } from 'react-native-gesture-handler';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import {colors} from '../helpers/constants';
 
 export default function Programs({ navigation }) {
     const [programsList, setProgramsList] = useState([]);
@@ -75,7 +76,7 @@ export default function Programs({ navigation }) {
         return (
             <View style={styles.swipedRow}>
                 <Animated.View style={[styles.deleteButton, { opacity }]}>
-                    <Ionicons name='trash' size={30} color='white' style={styles.deleteIcon} />
+                    <Ionicons name='trash' size={30} color={colors.white} style={styles.deleteIcon} />
                 </Animated.View>
             </View>
         );
@@ -85,7 +86,8 @@ export default function Programs({ navigation }) {
         <View style={styles.container}>
             <SafeAreaView>
                 {
-                    programsList.length > 0 ? programsList.map((program, index) => {
+                    programsList != null && programsList.length > 0 ? 
+                    programsList.map((program, index) => {
                         return (
                             <GestureHandlerRootView key={program.id} style={styles.gestureContainer}>
                                 <Swipeable
@@ -114,8 +116,8 @@ export default function Programs({ navigation }) {
 
                 <CustomButton
                     text='New Program'
-                    buttonColor='#404040'
-                    textColor='white'
+                    buttonColor={colors.primaryBlack}
+                    textColor={colors.white}
                     onButtonPress={
                         () => navigation.navigate("Program", {
                             programId: lastProgramId,
@@ -146,21 +148,21 @@ export default function Programs({ navigation }) {
                         <View
                             style={{
                                 height: '100%',
-                                backgroundColor: 'lightblue',
+                                backgroundColor: colors.primaryBlue,
                                 borderRadius: 20,
                                 padding: 20
                             }}>
                             <Text style={styles.modalTitle}>Are you sure?</Text>
                             <CustomButton
                                 text='Delete'
-                                buttonColor='#bb0000'
-                                textColor='white'
+                                buttonColor={colors.red}
+                                textColor={colors.white}
                                 onButtonPress={deleteProgram}
                             />
                             <CustomButton
                                 text='Cancel'
-                                buttonColor='white'
-                                textColor='#404040'
+                                buttonColor={colors.white}
+                                textColor={colors.primaryBlack}
                                 onButtonPress={() => setIsModalVisible(false)}
                             />
                         </View>
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        backgroundColor: 'white'
+        backgroundColor: colors.white
     },
     gestureContainer: {
         ...Platform.select({
@@ -202,8 +204,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         borderWidth: 1,
         borderRadius: 5,
-        borderColor: 'lightblue',
-        backgroundColor: 'lightblue',
+        borderColor: colors.primaryBlue,
+        backgroundColor: colors.primaryBlue,
         marginBottom: 20,
     },
     programTitle: {
@@ -226,7 +228,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-end',
         paddingLeft: 5,
-        backgroundColor: 'red',
+        backgroundColor: colors.red,
         marginBottom: 20,
         borderRadius: 5,
     },
